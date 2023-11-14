@@ -1,6 +1,6 @@
 import joi from 'joi';
 
-
+//DATABASE_URL="mysql://root:ok700607@express-database.cprapaipaiwl.ap-northeast-2.rds.amazonaws.com:3306/lv3DB"
 //- **주문 상태(OrderType)**는 **주문 대기(`PENDING`), 접수 완료(`ACCEPTED`), 취소(`CANCEL`)** 타입이 존재합니다.
 
 const OrderSchema = joi.object({
