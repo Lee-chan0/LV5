@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Users {
+  userId Int @id @default(autoincrement()) @map("userId")
+  nickname String @map("nickname")
+  password String @map("password")
+  userType String @default("CUSTOMER") @map("userType")
+
+  Orders Orders[]
+  Categories Categories[]
+  Menus Menus[]
+
+  @@map("Users")
+}
+
+model Categories {
+  categoryId Int @id @default(autoincrement()) @map("categoryId")
+  UserId Int @map("UserId")
+  name String @unique @map("name")
+  order Int @map("order") @default(1)
+  removed Boolean @default(false)
+
+  Menus Menus[]
+  
+  User Users @relation(fields: [UserId], references: [userId], onDelete : Cascade)
+
+  @@map("Categories")
+}
+
+model Menus {
+  menusId Int @id @default(autoincrement()) @map("menusId")
+  UserId Int @map("UserId")
+  CategoryId Int @map("CategoryId")
+  name String @map("name")
+  description String @db.Text @map("description")
+  image String @map("image")
+  price Int @map("price")
+  order Int @default(1) @map("order")
+  status String @default("FOR_SALE")
+  sellableCount Int @default(5) @map("sellableCount")
+  removed Boolean @default(false)
+
+  Orders Orders[]
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  Category Categories @relation(fields: [CategoryId], references: [categoryId], onDelete: Cascade)
+
+  @@map("Menus")
+}
+
+model Orders {
+  orderId Int @id @default(autoincrement()) @map("orderId")
+  MenusId Int @map("MenusId")
+  UserId Int @map("UserId")
+  quantity Int @map("quantity")
+  status String @default("PENDING") @map("status")
+  totalPrice Int @map("totalPrice")
+
+  
+  createdAt DateTime @default(now()) @map("createdAt")
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete : Cascade)
+  Menu Menus @relation(fields: [MenusId], references: [menusId], onDelete : Cascade)
+
+  @@map("Orders")
+}
